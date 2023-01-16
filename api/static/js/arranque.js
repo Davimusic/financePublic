@@ -74,7 +74,7 @@ function retornarInterfasIngresoDeInformacionJuntoContabla(inf){
     arr[1] = invertirArreglo(arr[1])
     
     let text = `
-    <div class="borde1 sombra" style=" width:100%; ${retornarDecicionResponsiva("","margin-left:5%;")}">
+    <div class="borde1 sombra" style=" width:100%; ${retornarDecicionResponsiva("","margin-left:5%;")} ${retornarComponentePorIngresoEgreso('', 'margin-top: 15%')}">
         ${retornarMotoresDeBusqueda()}
         <div class="color1" style="height: ${(altoPantalla/100)*67.5}px; overflow: scroll; ${retornarComponentePorIngresoEgreso('', 'border-bottom-left-radius: 0.5em; border-bottom-right-radius: 0.5em;')}">  
             <table class="color1 padding1" style="padding-top: 2%; width:100%;">
