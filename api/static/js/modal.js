@@ -22,6 +22,7 @@ function actualizarModal(){
 	idModal.style.display = "block";
     setTimeout(mostrarModal, 100)
 }
+
 function mostrarModal(){
 	let idModal = document.getElementById("modala");
 	idModal.style.boxShadow = "0px -1px 24px 0px rgba(0,0,0,0.75)";
@@ -30,7 +31,6 @@ function mostrarModal(){
 	idModal.style.transition = "1s";
 }
 
-
 function desactivarModal(){
 	let idModal = document.getElementById("modala");
 	idModal.style.transition = "1s";
@@ -38,11 +38,11 @@ function desactivarModal(){
 	idModal.style.opacity = "0";
 	setTimeout(esconderModal, 500)
 }
+
 function esconderModal(){
 	let idModal = document.getElementById("modala");
 	idModal.style.display = "none";
 }
-
 
 function modal(contenido, titulo){
 	let conte = ""
@@ -53,15 +53,12 @@ function modal(contenido, titulo){
 
 	
 	cod = `
-	<div style = "background: #ffffff91; backdrop-filter: blur(5px); display: none; padding: 2%; opacity: 0; height: 0px" id="modala">
-		<header style = "position: sticky; top: 0; padding: 2%; background: #3c8179; display:flex; justify-content: space-between;">
+	<div class='borde1' style = "text-align: center; background: #ffffff91; backdrop-filter: blur(5px); display: none; padding: 2%; opacity: 0; height: 0px" id="modala">
+		<header class='borde1' style = "position: sticky; top: 0; padding: 2%; background: #3c8179; display:flex; justify-content: space-between;">
 			<div style="display:flex; justify-content: space-between;">
 				<div> ${titulo} </div>
 			</div>
-			
-			<div style="justify-content: left;" onclick="desactivarModal()" >
-					X
-			</div>
+			<div style="cursor: pointer; justify-content: left;" onclick="desactivarModal()"> X </div>
 		</header>
 		<div style="padding-top: 20px;" class="">
                 ${conte}

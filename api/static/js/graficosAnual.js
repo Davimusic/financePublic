@@ -1,4 +1,4 @@
-let arrContenido = [], flujo = '', refenciaActual = '', arrReferencias =  [], path = '';
+let arrContenido = [], flujo = '', refenciaActual = '', arrReferencias =  [], path = '', arrConcatenado = [];
 
 function infoAnual(meses){
     path = window.location.pathname
@@ -14,7 +14,7 @@ function retornarFiltroReferencias(arr){
     let flujo = ['ingresos', 'egresos']
 
     let text = `
-        <div style="${retornarDecicionResponsiva('padding-top:40px;', 'padding-top:50px;')} ${retornarDecicionResponsiva('display:block;', 'display:flex;')} justify-content: space-between; width: 85%; padding-right: 2%; padding-left: 2%; margin:0px auto;">`
+        <div style="${retornarDecicionResponsiva('padding-top:100px;', 'padding-top:80px;')} ${retornarDecicionResponsiva('display:block;', 'display:flex;')} justify-content: space-between; width: 85%; padding-right: 2%; padding-left: 2%; margin:0px auto;">`
             if(path != '/vistaDeFlujoCompactado'){
                 text +=
                 `<div class="" style="margin-bottom:10px; padding-right: 2%;">
@@ -29,7 +29,7 @@ function retornarFiltroReferencias(arr){
                 </select>`
             } 
                 text += `
-                <div class="" style="margin-bottom:10px; padding-right: 2%; ${retornarDecicionResponsiva('padding-top:10px;', '')}">
+                <div class="" style="margin-bottom:10px; padding-right: 2%; padding-left: 2%; ${retornarDecicionResponsiva('padding-top:10px;', '')}">
                     <label for="">Flujo</label>
                 </div> 
                 <select onchange="refrescarGrafico('flujo', this.id, this.value)" style="height: 25px; width:100%;" class="borde1" id="selectGraficoFlujo">`
@@ -97,35 +97,6 @@ function retornarInformacionCoordenadaArr(arr, index){
     return arre
 }
 
-function retornarTablaFlujo(ingre, egres, total){
-    
-    let arr = [ingre, egres, total]
-    let arrTitulos = ['Ingresos', 'Egresos', 'Flujo actual']
-    let cod = ''
-    cod += `
-    <div style='text-align: center; justify-content: center; padding-top:15%; margin: 5%;'>
-        <H1 class='borde1' style="${retornarDecicionResponsiva('margin-left: 20%;', '')} width:200px; background:#1312129a;">Vista flujo anual</H1>
-        <table class="borde1" style="margin:0px auto; background:#1312129a; width: 200px;">`
-        let banderaColor = 0;
-        for (let u = 0; u < arr.length; u++) {
-            color = ''
-            if(banderaColor == 0){
-                banderaColor = 1
-            } else {
-                banderaColor = 0
-                color = 'background:#3c8179;'
-            }
-            cod += `
-            <tr style="${color}"><th>${arrTitulos[u]}</th>
-            <td> ${arr[u]} </td> </tr>`
-        }
-        cod += `
-        </table> 
-    </div>`
-
-    return cod
-}
-
 function retornarTraducirDiccionario_a_Arreglo(dicc){
     let arr = []
     for (const u in dicc) {
@@ -136,15 +107,12 @@ function retornarTraducirDiccionario_a_Arreglo(dicc){
 
 function crearGrafica(){
 
-    //console.log(arrReferencias); 
-    //console.log(arrContenido);
-    
     let cadena = [], arrFiltrado = [], sumaIngresos = 0, sumaEgresos = 0
     
     let dicc = {'01':'enero', '02':'febrero', '03':'marzo', '04':'abril', '05':'mayo', '06':'junio', '07':'julio', '08':'agosto', '09':'septiembre', '10':'octubre', '11':'noviembre', '12':'diciembre'}
     let diccCompactoIngresos = {'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
     let diccCompactoEgresos = {'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
-    let labels = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviemre", "diciembre"]
+    let labels = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviemre", "diciembre", 'ingresos', 'egresos', 'flujo actual']
     if(path == '/vistaDeFlujoReferencias'){
         for (let u = 0; u < arrContenido.length; u++) {
             if(arrContenido[u][0] == refenciaActual && arrContenido[u][1] == flujo){
@@ -179,21 +147,8 @@ function crearGrafica(){
         }
     }
     
-    console.log(arrFiltrado);
-    console.log(labels);
-    
-    labels = labels
-    cadena = [{
-        label: `${flujo} ${refenciaActual} `,  
-        data: arrFiltrado,  
-        backgroundColor: '#00B4D8',  
-    },]
-    
-
-    let tab = `width: ${((window.innerWidth / 100) * 80)}px; height: ${((window.innerHeight / 100) * 90)}px;`
-    let cel = `width: ${((window.innerWidth / 100) * 100)}px; height: ${((window.innerHeight / 100) * 110)}px;`
-
     let dinerosTraducidosParaPocentajes = []
+    
     /*/de prueba, testeo
     if(flujo == 'ingresos'){
         arrFiltrado = [1471000, 50000, 2000000, 1300000, 700000, 0, 0, 0, 0, 50000, 0, 0]
@@ -201,33 +156,39 @@ function crearGrafica(){
         arrFiltrado = [-1471000, -50000, -2000000, -1300000, -700000, 0, -4000000, -3000, 0, -50000, 0, -4500000]
     }*/
 
-    dinerosTraducidosParaPocentajes = retornarDinerosEnPocentajes(arrFiltrado)
-    //console.log(dinerosTraducidosParaPocentajes);
     
+    fucionarArreglos(arrFiltrado)
+    fucionarArreglos([sumaIngresos, sumaEgresos, (sumaIngresos + sumaEgresos)])
+    dinerosTraducidosParaPocentajes = retornarDinerosEnPocentajes(arrConcatenado)
     let cod = ''
 
     cod += 
     `
     ${menu()}
     ${retornarFiltroReferencias(arrReferencias)}
-    <div style="text-align: center; justify-content: center; ${retornarDecicionResponsiva(cel, tab)} ${retornarDecicionResponsiva('padding-top: 3%;', 'padding-top: 5%;')} overflow-x: auto; margin:0px auto; ${retornarDecicionResponsiva('display: block;', 'display: flex;')}">
-        ${retornarTablaFlujo(sumaIngresos, sumaEgresos, (sumaIngresos + sumaEgresos))}
-        <div class="borde1 padding1 sombra" style="background: #1312129a; height:fit-content; display:block; ${retornarDecicionResponsiva('', 'margin-Left:5%;')} ${retornarDecicionResponsiva('margin-top: 10%;', '')}">
-        <h3 style='text-align: center; justify-content: center; margin: 2%;'>${flujo} ${refenciaActual}</h3>`
+    <div style="text-align: center; justify-content: center; width: 100%; height: ${((window.innerHeight / 100) * 90)}px; ${retornarDecicionResponsiva('padding-top: 3%;', 'padding-top: 2%;')} overflow-x: auto; margin:0px auto;">
+        <div class="borde1 padding1 sombra" style="margin-left: 4%; margin-right: 4%; padding-top: 0px; background: #1312129a; height:fit-content; display:block; ${retornarDecicionResponsiva('margin-top: 2%;', '')}">
+            <h3 style='text-align: center; justify-content: center; margin-bottom: 1%;'>${flujo} ${refenciaActual}</h3>`
         for (let u = 0; u < dinerosTraducidosParaPocentajes.length; u++) {
-        cod += retornarBarrasEstadisticas(`barra${u}`, arrFiltrado[u], labels[u])
-        }
-    cod += `    
+        cod += retornarBarrasEstadisticas(`barra${u}`, arrConcatenado[u], labels[u])
+        }  
+    cod += `
         </div>
     </div>`
     
     document.getElementById('padreMenu').innerHTML = cod
-    
     generarAnimacionBarras(dinerosTraducidosParaPocentajes)
+    arrConcatenado = []
+}
+
+function fucionarArreglos(arr){
+    for (let u = 0; u < arr.length; u++) {
+        arrConcatenado.push(arr[u])
+    }
 }
 
 function retornarDinerosEnPocentajes(arre){
-    //console.log(arre);    
+    console.log(`arre: ${arre}, largo: ${arre.length}`);    
 
     let arr = [], maxValue = 1;
     for (let u = 0; u < arre.length; u++) {
@@ -238,14 +199,14 @@ function retornarDinerosEnPocentajes(arre){
     }
     //console.log(`max value : ${maxValue}`);
     for (let u = 0; u < arre.length; u++) {
-        let nuevoValor = (parseInt(arre[u]) * retornarDecicionResponsiva(200, 400))/maxValue // el 200 y 400 el el maximo valor que declarè en el div que muestra el porcentaje
+        let nuevoValor = (parseInt(arre[u]) * ((window.innerWidth / 100) * retornarDecicionResponsiva('42', '65')))/maxValue //42  el 200 y 400 el el maximo valor que declarè en el div que muestra el porcentaje
         if(nuevoValor < 0){
             nuevoValor = -1 * nuevoValor
         }
         //console.log(`nuevoValor: ${nuevoValor}`);
         arr.push(nuevoValor)
     }
-    //console.log(arr);
+    console.log(arr);
     return arr
 }
 
@@ -258,12 +219,18 @@ function retornarNumSiemprePositivo(num){
     return num
 }
 
+function cambiarColor(id, color){
+    let ob = document.getElementById(id)
+    ob.style.transition = '0.25s'
+    ob.style.background = color
+}
+
 function retornarBarrasEstadisticas(id, dineroBruto, mes){
     let cod = `
-    <div style="display:flex; margin-bottom: 1%;">
-        <label style="width: 100px;" for="">${mes}</label>
-        <div style="background: none; width: ${retornarDecicionResponsiva(210, 410)}px;">
-            <div class="borde1" id='${id}' style="background:#3c8179; height: 25px;" ></div>
+    <div onmouseover="cambiarColor('padre${id}', '#0077B6')" onmouseout="cambiarColor('padre${id}', '#ffffff00')"  id='padre${id}' style="display:flex; margin-bottom: 0.5%; border-radius: 0.5em;">
+        <label style="width: 150px;" for="">${mes}</label>
+        <div style="width: ${((window.innerWidth / 100) * 70)}px;">
+            <div class="borde1" id='${id}' style="cursor: pointer; background:#3c8179; height: 20px;" ></div>
         </div>
         <label style="width: 100px; padding-left: 5%;" for="">${dineroBruto}</label>
     </div>`
@@ -273,8 +240,10 @@ function retornarBarrasEstadisticas(id, dineroBruto, mes){
 let copiaDinerosTraducidosParaPocentajes = []
 function generarAnimacionBarras(dinerosTraducidosParaPocentajes){
     copiaDinerosTraducidosParaPocentajes = dinerosTraducidosParaPocentajes
-    for (let u = 0; u < 12; u++) {
+    
+    for (let u = 0; u < copiaDinerosTraducidosParaPocentajes.length; u++) {
         let ba = `barra${u}`
+        console.log(ba);
         let barra = document.getElementById(ba)
         barra.style.transition = '1000ms';
         barra.style.width = `0px`;
@@ -284,7 +253,7 @@ function generarAnimacionBarras(dinerosTraducidosParaPocentajes){
 }
 
 function correrBarras(){
-    for (let u = 0; u < 12; u++) {
+    for (let u = 0; u < copiaDinerosTraducidosParaPocentajes.length; u++) {
         let ba = `barra${u}`
         let barra = document.getElementById(ba)
         barra.style.transition = '3s';
@@ -297,48 +266,3 @@ function correrBarras(){
     }
 }
 
-
-    /* var ctx = document.getElementById('myChart').getContext('2d');
-
-    var chart = new Chart(ctx, {
-      type: 'bar',  // Tipo de gráfico: barras
-        data: {
-            labels: labels,  // Etiquetas para cada barra
-            datasets: cadena
-        },
-        options: {
-        scales: {
-            xAxes: [{
-                scaleLabel: {
-                    display: true,
-                    labelString: ``,
-                    fontColor: '#ffffff',  
-                },
-                ticks: {
-                    fontColor: '#ffffff',
-                    stepSize: 10
-                    
-                }
-                    }],
-            yAxes: [{
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Dinero',
-                    fontColor: '#ffffff'  
-                },
-            ticks: {
-                fontColor: '#ffffff',
-                stepSize: 10
-            }
-            }]
-        },
-        legend: {
-            labels: {
-                fontColor: '#ffffff'  
-            }
-            }
-        }
-    });
-    chart.options.scales.yAxes[0].ticks.display = false;
-    chart.update();
-}*/

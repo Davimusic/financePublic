@@ -5,25 +5,33 @@ let altoPantalla = window.innerHeight;
 
 function arranque(inf){
     Referencia = ordenarAlfaNumerico(retornarReferencias(inf))
-    document.getElementById("padreMenu").innerHTML = `
+    let code = ``
+    code += `
     ${menu()}
     <div id="padre" style="margin: 3%; position:relative; ${heightPantalla()}">
         <div id="porAhora" style="position: absolute; width:100%;">
-            <div style="${retornarDecicionResponsiva('display:block;','display:flex;')} margin-top:2%; width:100%">
-                                                                                                                        
-            ${retornarComponente(retornarDecicionResponsiva('width:96%;',''), marginInternos,"pedro", "", "", "", "crear","sin valor")}   
+            <div style="${retornarDecicionResponsiva('display:block;','display:flex;')} margin-top:2%; width:100%">` 
 
-            ${retornarInterfasIngresoDeInformacionJuntoContabla(inf)}
-
+        code += retornarComponentePorIngresoEgreso(`${retornarComponente(retornarDecicionResponsiva('width:96%;',''), marginInternos,"pedro", "", "", "", "crear","sin valor")}`, '')    
+            
+    code += `${retornarInterfasIngresoDeInformacionJuntoContabla(inf)}
             </div><!--para usar z-index las cordenadas deben tener position absolute-->
         <div id="root" style="z-index: 1000; position: absolute; top: 0; left: 0; right: 0; margin: 0 auto;"></div>  
-    </div> 
-    `
+    </div>`
+    document.getElementById("padreMenu").innerHTML = code
 
     let divPadre = document.getElementById("root")
     let cod = ""
     cod += modal()
     divPadre.innerHTML = cod;
+}
+
+function retornarComponentePorIngresoEgreso(positivo, negativo){
+    if(window.location.pathname == '/ingresos' || window.location.pathname == '/egresos' ){
+        return positivo
+    } else {
+        return negativo
+    }
 }
 
 function reemplazarCaracter(busca, cambia, cadena){
@@ -54,6 +62,7 @@ function retornarReferencias(inf){
     return arr
 }
 
+let totalIngresoDia = 0
 function retornarInterfasIngresoDeInformacionJuntoContabla(inf){
     let arrInf = traducirInfoDesdeBackend(inf)
     let arr = [["Referencia", "Dinero", "Fecha", "Texto adicional"], []]
@@ -63,11 +72,11 @@ function retornarInterfasIngresoDeInformacionJuntoContabla(inf){
     }
 
     arr[1] = invertirArreglo(arr[1])
-
+    
     let text = `
     <div class="borde1 sombra" style=" width:100%; ${retornarDecicionResponsiva("","margin-left:5%;")}">
         ${retornarMotoresDeBusqueda()}
-        <div class="color1" style="height: ${(altoPantalla/100)*67.5}px; overflow: scroll; border-bottom-left-radius: 0.5em; border-bottom-right-radius: 0.5em;">  
+        <div class="color1" style="height: ${(altoPantalla/100)*67.5}px; overflow: scroll; ${retornarComponentePorIngresoEgreso('', 'border-bottom-left-radius: 0.5em; border-bottom-right-radius: 0.5em;')}">  
             <table class="color1 padding1" style="padding-top: 2%; width:100%;">
                 <tr class="" style="background:#6b6b6b; position: sticky; top:0;">
         `
@@ -91,9 +100,10 @@ function retornarInterfasIngresoDeInformacionJuntoContabla(inf){
 
         text +=`<tr style="${color}">`    
         for (let e = 0; e < (arr[1][u].length - 2); e++) {
-                text+=`
-                    <td>${arr[1][u][e]}</td>`
+            text+=`<td>${arr[1][u][e]}</td>`
         } 
+
+        totalIngresoDia += parseInt(arr[1][u][1])
 
         let mirar = `editar${u}`
         let idBorrar = `borrar${u}`
@@ -108,12 +118,18 @@ function retornarInterfasIngresoDeInformacionJuntoContabla(inf){
                     </td>
                 </tr>`                
         }
-
+            
+        
+        var today = new Date();
+        var day = today.getDate();
+        var month = today.getMonth() + 1;
+        var year = today.getFullYear();
+        
         text+= `
             </table>
         </div>
-    </div>    
-        `
+        ${retornarComponentePorIngresoEgreso(`<div class="color2" style='padding: 10px; border-bottom-left-radius: 0.5em; border-bottom-right-radius: 0.5em;'>total ${window.location.pathname} anotados el ${month}/${day}/${year}: ${totalIngresoDia}</div>`, '')}
+    </div>`
     return text;
 }
 
@@ -140,7 +156,7 @@ function retornarMotoresDeBusqueda(){
                 <input style="height: 25px;" value = "" class="borde1" type="date" name="buscarFecha">
                 
             </div>
-            <button style="background: none; border: none; height:40px; padding-top: 8px;" type="submit"><img class="efectoMenu" style="height:40px; border-radius:50%;" src="https://res.cloudinary.com/dplncudbq/image/upload/v1671160860/mias/descarga_uomlyb.png" alt=""></button>    
+            <button style="background: none; border: none; height:40px; padding-top: 8px;" type="submit"><img class="efectoMenu" style="background: white; height:40px; border-radius:50%;" src="https://res.cloudinary.com/dplncudbq/image/upload/v1671160860/mias/descarga_uomlyb.png" alt=""></button>    
         </div>
     </form>
     `
@@ -194,7 +210,7 @@ function retornarDecicionResponsiva(celular, desdeTablet){
                                                                                                         
 function retornarComponente(accion2, marginInternos,referencia, dinero, fecha, textoAdicional, formUso, codigoUnico, signoNumerico){
     let cod = `
-    <div class="color1 borde1 padding1 sombra" style="margin-bottom:5%; max-height:380px; ${accion2} ${retornarDecicionResponsiva('margin-top: 10%;', '')}"> 
+    <div class="color1 borde1 padding1 sombra" style="max-width:380px; display: inline-block; margin-bottom:5%; max-height:380px; ${accion2} ${retornarDecicionResponsiva('margin-top: 10%;', '')}"> 
         <form method="post">
             <input style="display:none;" value = "${formUso}" class="borde1" type="text" name="formUso" id="formUso" required>
             <input style="display:none;" value = "${codigoUnico}" class="borde1" type="text" name="codUnico" required>
@@ -202,7 +218,7 @@ function retornarComponente(accion2, marginInternos,referencia, dinero, fecha, t
             <div style="margin-bottom:10px;">
                 <label for="">Referencia</label>
             </div> 
-            <select style="width:100%;" class="borde1" name="referencia" id="joder" required>`
+            <select style="width:100%;" class="borde1" name="referencia" id="referencia" required>`
             for (let u = 0; u < Referencia.length; u++) {
                 let seleccionar = ""
                 //console.log(`referencia: ${referencia}, Referencia[u]: ${Referencia[u]}`);
@@ -217,19 +233,19 @@ function retornarComponente(accion2, marginInternos,referencia, dinero, fecha, t
             <div style="${marginInternos}">
                 <label for="">Ingreso de dinero</label>
             </div>    
-            <input style="width:100%;" value="${dinero}" class="borde1" type="number" name="dinero" id="" required> 
+            <input style="width:100%;" value="${dinero}" class="borde1" type="number" name="dinero" id="dinero" required> 
             
             <div style="${marginInternos}">
                 <label for="">Fecha a ingresar</label>
             </div>    
-            <input style="width:100%;" value = "${fecha}" class="borde1" type="date" name="fecha" id="" required>
+            <input style="width:100%;" value = "${fecha}" class="borde1" type="date" name="fecha" id="fecha" required>
             
             <div style="${marginInternos}">
                 <label for="">Texto adicional</label>
             </div>    
-            <input style="width:100%;" value="${textoAdicional}" class="borde1" type="text" name="texto" id="">
+            <input style="width:100%;" value="${textoAdicional}" class="borde1" type="text" name="texto" id="texto">
             
-            <button style="${marginInternos} background: none; border: none; height:40px;" type="submit"><img class="efectoMenu" style="height:40px; border-radius:50%;" id="botonEditar" src="https://res.cloudinary.com/dplncudbq/image/upload/v1671160860/mias/descarga_uomlyb.png" alt=""></button>
+            <button id="botonSubmit" onclick="desactivarBotonDespuesDeUsado('botonSubmit')" style="${marginInternos} background: none; border: none; height:40px;" type="submit"><img class="efectoMenu" style="background: white; height:40px; border-radius:50%;" src="https://res.cloudinary.com/dplncudbq/image/upload/v1671160860/mias/descarga_uomlyb.png" alt=""></button>
         </form>  
     </div>`
 
@@ -283,5 +299,21 @@ function ordenarAlfaNumerico(arr){
     });
 
     return arr
+}
+
+let banderaBoton = 0
+function desactivarBotonDespuesDeUsado(id){
+    let referencia = document.getElementById('referencia').value
+    let dinero = document.getElementById('dinero').value
+    let fecha = document.getElementById('fecha').value
+    let boton = document.getElementById(id)
+    if(referencia != '' && dinero != '' && fecha != ''){
+        if (banderaBoton == 0) {
+            banderaBoton = 1
+        } else {
+            boton.disabled = true;
+            console.log('boton bloqueado');
+        }
+    } 
 }
 
